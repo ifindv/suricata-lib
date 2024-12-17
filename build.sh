@@ -67,7 +67,7 @@ fi
 # wget https://codeload.github.com/libunwind/libunwind/zip/refs/heads/master -P $DEPS_DIR
 # wget https://astron.com/pub/file/file-5.45.tar.gz -P $DEPS_DIR
 # wget http://security.ubuntu.com/ubuntu/pool/main/l/lz4/lz4_1.9.4.orig.tar.gz -P $DEPS_DIR
-# wget https://static.rust-lang.org/dist/rust-1.74.0-x86_64-unknown-linux-gnu.tar.xz -P $DEPS_DIR
+# wget https://static.rust-lang.org/dist/rust-1.74.0-x86_64-unknown-linux-gnu.tar.gz -P $DEPS_DIR
 
 # install depends: pcre2
 
@@ -217,8 +217,8 @@ CFLAGS="$CFLAGS -I$INST_DIR/lz4/include"
 # install depends: rust
 
 if [ $build_all -eq 1 ]; then
-    if [ ! -d $DEPS_DIR/rust-1.74.0-x86_64-unknown-linux-gnu.tar.xz ]; then
-        wget https://static.rust-lang.org/dist/rust-1.74.0-x86_64-unknown-linux-gnu.tar.xz -P $DEPS_DIR
+    if [ ! -e $DEPS_DIR/rust-1.74.0-x86_64-unknown-linux-gnu.tar.gz ]; then
+        wget https://static.rust-lang.org/dist/rust-1.74.0-x86_64-unknown-linux-gnu.tar.gz -P $DEPS_DIR
     fi
     if [ -d $INST_DIR/rust ]; then
         rm -rf $INST_DIR/rust
@@ -228,7 +228,7 @@ if [ $build_all -eq 1 ]; then
     fi
     mkdir -p $INST_DIR/rust
 
-    cd $DEPS_DIR && tar xvf rust-1.74.0-x86_64-unknown-linux-gnu.tar.xz && cd rust-1.74.0-x86_64-unknown-linux-gnu && \ 
+    cd $DEPS_DIR && tar xvf rust-1.74.0-x86_64-unknown-linux-gnu.tar.gz && cd rust-1.74.0-x86_64-unknown-linux-gnu && \ 
     ./install.sh --prefix=$INST_DIR/rust
 fi
 
@@ -251,6 +251,7 @@ mkdir -p $INST_DIR/suricata/var
 export PATH=$INST_DIR/rust/bin:$PATH
 
 cd $WORK_DIR && aclocal -I m4 && automake --add-missing && cp configure.bak configure && chmod 777 configure
+cd $WORK_DIR && chmod 777 libhtp/*.sh
 cd $WORK_DIR && ./configure $CROSS_FLAGS --disable-gccmarch-native --prefix=$INST_DIR/suricata --sysconfdir=/opt/suricata/etc --localstatedir=/opt/suricata/var \
     --enable-libmagic=false --enable-debug \
     LDFLAGS="$LDFLAGS" CFLAGS="$CFLAGS" PATH="$INST_DIR/rust/bin:$PATH"
